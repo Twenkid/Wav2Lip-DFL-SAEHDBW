@@ -10,6 +10,33 @@ import platform
 
 parser = argparse.ArgumentParser(description='Inference code to lip-sync videos in the wild using Wav2Lip models')
 
+# Created by Wav2Lip Authors
+
+"""
+ Twenkid additions: 4-8-2022
+ images_format, images_path, export_images y/n
+ Export frames
+ If  Video encoding is changed from DIVX to H264 by Cisco - download the DLL and put it in the folder of the script or in a system directory!
+ For exporting to video, if the appropriate library is missing e.g.
+ openh264-1.8.0-win64.dll
+ for my version of opencv,
+ an error message will suggest which version to download.
+ https://github.com/cisco/openh264/releases
+ 
+ You can avoid this also by changing the encoder back to DIVX, probably XVID etc.
+ 
+""" 
+
+parser.add_argument('--export_images', type=str, default='n', required=False, help='y/n save frames as images, not only as a video; merge or edit them yourself')
+
+parser.add_argument('--images_path', type=str, 
+					help='Export frames to this folder for higher quality of the merged video.', required=False)
+                    
+parser.add_argument('--images_format', type=str, 
+					help='jpg, png or any supported by opencv - jpg is default, png for lossless saving', default="jpg" required=False)
+                                        
+###
+                    
 parser.add_argument('--checkpoint_path', type=str, 
 					help='Name of saved checkpoint to load weights from', required=True)
 
@@ -179,6 +206,16 @@ def load_model(path):
 	return model.eval()
 
 def main():
+	cnt = 0
+	path = "T:\\Arnold-Intro\\" 
+    #change it to what you need #2-8-2022:
+	if args.export_images:      #4-8-2022
+		if not os.path.isdir(args.images_path):
+		#print("Invalid path to the exported images folder! " + args.images_path) 
+		else: os.mkdir(args.images_path)
+        path = args.images_path
+    image_format = args.images_format; #jpg, png
+    #
 	if not os.path.isfile(args.face):
 		raise ValueError('--face argument must be a valid path to video/image file')
 
@@ -213,7 +250,7 @@ def main():
 			full_frames.append(frame)
 
 	print ("Number of frames available for inference: "+str(len(full_frames)))
-
+    
 	if not args.audio.endswith('.wav'):
 		print('Extracting raw audio...')
 		command = 'ffmpeg -y -i {} -strict -2 {}'.format(args.audio, 'temp/temp.wav')
@@ -244,8 +281,8 @@ def main():
 	full_frames = full_frames[:len(mel_chunks)]
 
 	batch_size = args.wav2lip_batch_size
-	gen = datagen(full_frames.copy(), mel_chunks)
-
+	gen = datagen(full_frames.copy(), mel_chunks)	
+	
 	for i, (img_batch, mel_batch, frames, coords) in enumerate(tqdm(gen, 
 											total=int(np.ceil(float(len(mel_chunks))/batch_size)))):
 		if i == 0:
@@ -254,7 +291,7 @@ def main():
 
 			frame_h, frame_w = full_frames[0].shape[:-1]
 			out = cv2.VideoWriter('temp/result.avi', 
-									cv2.VideoWriter_fourcc(*'DIVX'), fps, (frame_w, frame_h))
+									cv2.VideoWriter_fourcc(*'X264'), fps, (frame_w, frame_h))
 
 		img_batch = torch.FloatTensor(np.transpose(img_batch, (0, 3, 1, 2))).to(device)
 		mel_batch = torch.FloatTensor(np.transpose(mel_batch, (0, 3, 1, 2))).to(device)
@@ -264,12 +301,28 @@ def main():
 
 		pred = pred.cpu().numpy().transpose(0, 2, 3, 1) * 255.
 		
+		
+		jpg_quality = 95
 		for p, f, c in zip(pred, frames, coords):
 			y1, y2, x1, x2 = c
 			p = cv2.resize(p.astype(np.uint8), (x2 - x1, y2 - y1))
 
 			f[y1:y2, x1:x2] = p
-			out.write(f)
+			out.write(f)            
+			#cv2.imwrite(path+str(cnt)+".jpg", f)
+            #b,g,r = cv2.split(f)
+            #FOR SAEHDBW
+			bw = cv2.cvtColor(f, cv2.COLOR_BGR2GRAY)
+			cv2.imshow("BLACKWHITE", bw)
+			cv2.waitKey(1)
+			#cv2.imwrite(path+str(cnt)+".jpg", bw)
+			cv2.imwrite(path+str(cnt)+image_format, bw)
+            
+			#cv2.imwrite(path, bw, [int(cv2.IMWRITE_JPEG_QUALITY), jpg_quality]) #grayscale
+			cnt+=1            
+			print(cnt)
+		#print("Press a Key...")
+		cv2.waitKey(0)
 
 	out.release()
 
