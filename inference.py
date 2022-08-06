@@ -23,7 +23,8 @@ parser = argparse.ArgumentParser(description='Inference code to lip-sync videos 
  an error message will suggest which version to download.
  https://github.com/cisco/openh264/releases
  
- You can avoid this also by changing the encoder back to DIVX, probably XVID etc.
+ You can avoid this also by changing the encoder back to DIVX, probably XVID etc. if you don't want to install the other codec and you're happy with the quality.
+ VideoWriter_fourcc(*'X264') --> VideoWriter_fourcc(*'XVID') etc.
  
 """ 
 
