@@ -1,3 +1,47 @@
+## Additions
+
+ Twenkid's additions: 4-8-2022
+ images_format, images_path, export_images y/n
+ Export frames
+ If  Video encoding is changed from DIVX to H264 by Cisco - download the DLL and put it in the folder of the script or in a system directory!
+ For exporting to video, if the appropriate library is missing e.g.
+ openh264-1.8.0-win64.dll
+ for my version of opencv,
+ an error message will suggest which version to download.
+ https://github.com/cisco/openh264/releases
+ 
+ You can avoid this also by changing the encoder back to DIVX, probably XVID etc.
+ 
+ git clone ...
+ cd ... dir of the installation or put the DLL of H264 in the current dir (if used)
+
+// ^ is a multiline delimiter for Windows
+```
+Default (just video exported):
+python "C:\BACKUP\T-25-7-2022\Wav2Lip\inference.py" --checkpoint_path "C:\BACKUP\T-25-7-2022\Wav2Lip\checkpoints\wav2lip_gan.pth"  ^
+ --face  "T:\video-to-sync.mp4"  --audio  "T:\audio-driver.mp3"  --outfile "T:\Result-out.mp4"
+```
+
+Extended with frames separately:
+
+```
+python "C:\BACKUP\T-25-7-2022\Wav2Lip\inference.py" --checkpoint_path "C:\BACKUP\T-25-7-2022\Wav2Lip\checkpoints\wav2lip_gan.pth"  ^
+--face  "T:\video-to-sync.mp4"  --audio  "T:\audio-for-syncing.mp3"  ^
+--images_format jpg --export_images y --images_path T:\frames\ --outfile "T:\Result-out.mp4"
+``` 
+ 
+
+parser.add_argument('--export_images', type=str, default='n', required=False, help='y/n save frames as images, not only as a video; merge or edit them yourself')
+
+parser.add_argument('--images_path', type=str, 
+					help='Export frames to this folder for higher quality of the merged video.', required=False)
+
+parser.add_argument('--images_format', type=str, 
+					help='jpg, png or any supported by opencv - jpg is default, png for lossless saving', default="jpg" required=False)
+
+###
+
+
 # **Wav2Lip**: *Accurately Lip-syncing Videos In The Wild*
 
 For commercial requests, please contact us at radrabha.m@research.iiit.ac.in or prajwal.k@research.iiit.ac.in. We have an HD model ready that can be used commercially.
