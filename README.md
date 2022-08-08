@@ -1,6 +1,9 @@
 # **Wav2Lip**: *Accurately Lip-syncing Videos In The Wild*
+## Future work
 
-## Additions by Twenkid
+Integration with <a href="https://github.com/Twenkid/DeepFaceLab-SAEHDBW/">DFL-SAEHDBW</a>
+
+## Additions by Twenkid for DFL-SAEHDBW
 
  Twenkid's additions: 4-8-2022
  images_format, images_path, export_images y/n
@@ -16,6 +19,22 @@
  
  You may first make a test run on a short audio,  1 s etc. to see the required DLL version.
  
+...
+## Usage notes and troubleshooting
+
+The program collects all the frames of the video in RAM. That often causes OOM errors for "big" and long videos (depends on your RAM, but it may happen even with 32 GB etc. and say 60-80 seconds videos x 25 fps etc.), especially for high resolution FHD etc.. 
+
+In order to avoid that you can just split the big video and merge the shorter clips step by step. That's useful also for debugging if there are bugs in the syntax of your script. The check of some of the paths seems to be done after the processing which can be annoying - if a required video DLL is missing you will be informed only after the processing of all frames has finished, so again it's a good idea initially to test it with a minimum length audio chunks.
+
+See results with DFL-SAEHDBW: https://github.com/Twenkid/DeepFaceLab-SAEHDBW/
+
+However note that the wav2lip quality is then vastly improved via DFL-SAEHDBW repairement and upsscaling (96x96 in wav2lip to 192x192 in the DFL models.
+In Part III there is no fine tuning for Lena, but for the more sophisticated Part IV, there is additional finetuning for Arnold and Stoltenberg.
+
+<img src="https://user-images.githubusercontent.com/23367640/179422086-2af2a887-4681-4f58-a68f-d16f4f6a04df.png">
+
+<img src="https://user-images.githubusercontent.com/23367640/183316946-3787e880-a647-423d-b6f8-2078a514642e.jpg">
+
  
  git clone ...
  cd ... dir of the installation or put the DLL of H264 in the current dir (if used)
@@ -25,6 +44,9 @@
 Default (just video exported):
 python "C:\BACKUP\T-25-7-2022\Wav2Lip\inference.py" --checkpoint_path "C:\BACKUP\T-25-7-2022\Wav2Lip\checkpoints\wav2lip_gan.pth"  ^
  --face  "T:\video-to-sync.mp4"  --audio  "T:\audio-driver.mp3"  --outfile "T:\Result-out.mp4"
+ 
+ 
+
 ```
 
 Extended with frames separately:
@@ -45,7 +67,9 @@ parser.add_argument('--images_format', type=str,
 					help='jpg, png or any supported by opencv - jpg is default, png for lossless saving', default="jpg" required=False)
 
 
-# Etc.
+* An issue in the original repository: https://github.com/Rudrabha/Wav2Lip/issues/408
+
+## Etc.
 
 ```
 # Wav2Lip Original Repository
