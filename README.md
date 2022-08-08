@@ -1,4 +1,6 @@
-## Additions
+# **Wav2Lip**: *Accurately Lip-syncing Videos In The Wild*
+
+## Additions by Twenkid
 
  Twenkid's additions: 4-8-2022
  images_format, images_path, export_images y/n
@@ -30,7 +32,7 @@ python "C:\BACKUP\T-25-7-2022\Wav2Lip\inference.py" --checkpoint_path "C:\BACKUP
 --images_format jpg --export_images y --images_path T:\frames\ --outfile "T:\Result-out.mp4"
 ``` 
  
-
+```python 
 parser.add_argument('--export_images', type=str, default='n', required=False, help='y/n save frames as images, not only as a video; merge or edit them yourself')
 
 parser.add_argument('--images_path', type=str, 
@@ -39,10 +41,11 @@ parser.add_argument('--images_path', type=str,
 parser.add_argument('--images_format', type=str, 
 					help='jpg, png or any supported by opencv - jpg is default, png for lossless saving', default="jpg" required=False)
 
-###
 
+# Etc.
 
-# **Wav2Lip**: *Accurately Lip-syncing Videos In The Wild*
+```
+# Wav2Lip Original Repository
 
 For commercial requests, please contact us at radrabha.m@research.iiit.ac.in or prajwal.k@research.iiit.ac.in. We have an HD model ready that can be used commercially.
 
