@@ -14,6 +14,9 @@
  
  You can avoid this also by changing the encoder back to DIVX, probably XVID etc.
  
+ You may first make a test run on a short audio,  1 s etc. to see the required DLL version.
+ 
+ 
  git clone ...
  cd ... dir of the installation or put the DLL of H264 in the current dir (if used)
 
